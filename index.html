@@ -1,11 +1,49 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-    <meta charset="utf-8" />
-    <title>test site</title>
+<meta charset="UTF-8">
+<title>WebSocket 試す１</title>
 </head>
-<body>
-    <p>森谷のテスト</p>
-    <p>どんどん変化</p>
+<body style="color: #000000; background-color: #ffffff; font-size: 100%">
+  <script type="text/javascript">
+    // 接続先URI
+    var uri = "ws://" + "your.host.name" + "/testws"; // ← [output] websocket の path に合わせる
+    // WebSocketオブジェクト
+    var webSocket = null;
+
+    // 接続
+    function open() {
+        if (webSocket == null) {
+            // 初期化
+            webSocket = new WebSocket(uri);
+            // イベントハンドラ
+            webSocket.onopen = (ev) =>
+              {
+                console.log("Connect..");
+              };
+
+            webSocket.onmessage = (ev) =>
+              {
+                if (ev && ev.data) {
+                    console.log(ev.data);
+                    var d = document.getElementById("targetDiv");
+                    d.innerHTML = ev.data;
+                }
+              };
+
+            webSocket.onclose = (ev) => {
+                console.log("disconnect(" + ev.code + ")");
+                webSocket = null;
+              };
+
+            webSocket.onerror = (ev) =>
+              {
+                  console.log("Error " + ev);
+              };;
+        }
+    }
+    open();
+  </script>
+  <div id="targetDiv" style="width:300px;height:300px;border:solid 1px;"></div>
 </body>
 </html>
